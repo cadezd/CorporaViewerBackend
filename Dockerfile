@@ -1,29 +1,35 @@
-FROM node:20-slim AS base
+# Stage 1: Build
+FROM node:20-slim AS builder
 
-# Set environment variables
-ENV NODE_ENV=production \
-    IP_ADDRESS=localhost \
-    PORT=3000 \
-    ELASTICSEARCH_HOSTS=http://localhost:9200 \
-    PATH_TO_DATA=/app/data \
-    MEETINGS_INDEX_NAME=meetings-index \
-    WORDS_INDEX_NAME=words-index \
-    SENTENCES_INDEX_NAME=sentences-index
-
-# Create app directory
 WORKDIR /app
-
-# Copy only package.json & package-lock.json first (leverage Docker layer caching)
 COPY package*.json ./
 
-# Install dependencies (only production deps for smaller image)
-RUN npm ci --omit=dev
+RUN npm ci
 
-# Copy application source
 COPY . .
 
-# Expose the port
+RUN npm run build  # <-- generates /app/dist
+
+
+# Stage 2: Runtime
+FROM node:20-slim
+
+# Environment variables
+ENV IP_ADDRESS=localhost
+ENV PORT=3000
+ENV ELASTICSEARCH_HOSTS=http://localhost:9200
+ENV PATH_TO_DATA=/app/data
+ENV MEETINGS_INDEX_NAME=meetings-index
+ENV WORDS_INDEX_NAME=words-index
+ENV SENTENCES_INDEX_NAME=sentences-index
+
+WORKDIR /app
+COPY --from=builder /app/package*.json .
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/dist ./dist
+
 EXPOSE 3000
 
-# Start the API
-CMD ["npm", "start"]
+CMD ["node", "dist/app.js"]
