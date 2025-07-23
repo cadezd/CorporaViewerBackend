@@ -25,8 +25,5 @@ COPY . .
 # Expose the port
 EXPOSE 3000
 
-# Use non-root user for security
-USER appuser
-
 # Start the API
 CMD ["npm", "start"]
