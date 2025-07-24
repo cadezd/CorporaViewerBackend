@@ -34,8 +34,25 @@ const buildAllMeetingsQuery = (filters: CorpusSearchFilters): any => {
         });
     }
 
+    // Add language filter (exclusive AND)
+    if (filters.languages) {
+        const langs = filters.languages.split(",").map(l => l.trim());
+        langs.forEach(lang => {
+            baseQuery.bool.must.push({
+                nested: {
+                    path: "sentences.translations",
+                    query: {
+                        term: {
+                            "sentences.translations.lang": lang
+                        }
+                    }
+                }
+            });
+        });
+    }
+
     return baseQuery;
-}
+};
 
 
 const buildMeetingsPageQuery = (queryParams: GetPageQueryParams): any => {

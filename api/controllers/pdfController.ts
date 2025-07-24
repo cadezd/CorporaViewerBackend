@@ -7,7 +7,7 @@ import pdfRepository from "../repositories/pdfRepository";
 import {SendFileStrategy} from "../../strategies/SendFileStrategy";
 import * as fs from "fs";
 import {ReadStream} from "fs";
-import path from "path";
+import path from "node:path";
 
 
 const queue: QueueObject<TaskData> = async.queue(async (taskData: TaskData, callback) => {
@@ -41,6 +41,7 @@ const queue: QueueObject<TaskData> = async.queue(async (taskData: TaskData, call
 const getById = async (req: Request, res: Response) => {
     try {
         const filename: string = utils.reformatId(req.params.id);
+
         const path: string = (process.env.PATH_TO_DATA || '/home/david/Data/CorporaViewer') + `/pdfs/${filename}.pdf`
 
         queue.push(
