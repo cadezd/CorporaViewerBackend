@@ -7,7 +7,7 @@ import pdfRepository from "../repositories/pdfRepository";
 import {SendFileStrategy} from "../../strategies/SendFileStrategy";
 import * as fs from "fs";
 import {ReadStream} from "fs";
-import path from "node:path";
+import * as path from "path";
 
 
 const queue: QueueObject<TaskData> = async.queue(async (taskData: TaskData, callback) => {
@@ -42,10 +42,10 @@ const getById = async (req: Request, res: Response) => {
     try {
         const filename: string = utils.reformatId(req.params.id);
 
-        const path: string = (process.env.PATH_TO_DATA || '/home/david/Data/CorporaViewer') + `/pdfs/${filename}.pdf`
+        const pdfFilePath: string = (process.env.PATH_TO_DATA || '/home/david/Data/CorporaViewer') + `/pdfs/${filename}.pdf`
 
-        queue.push(
-            new TaskData(path, res)
+        await queue.push(
+            new TaskData(pdfFilePath, res)
         );
 
     } catch (error: any) {
@@ -58,10 +58,10 @@ const getById = async (req: Request, res: Response) => {
 const getThumbnailById = async (req: Request, res: Response) => {
     try {
         const filename: string = utils.reformatId(req.params.id);
-        const path: string = (process.env.PATH_TO_DATA || '/home/david/Data/CorporaViewer') + `/thumbnails/${filename}.png`;
+        const thumbnailFilePath: string = (process.env.PATH_TO_DATA || '/home/david/Data/CorporaViewer') + `/thumbnails/${filename}.png`;
 
-        queue.push(
-            new TaskData(path, res),
+        await queue.push(
+            new TaskData(thumbnailFilePath, res),
         );
 
     } catch (error: any) {

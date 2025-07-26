@@ -34,20 +34,18 @@ const buildAllMeetingsQuery = (filters: CorpusSearchFilters): any => {
         });
     }
 
-    // Add language filter (exclusive AND)
+    // Add language filter (OR)
     if (filters.languages) {
         const langs = filters.languages.split(",").map(l => l.trim());
-        langs.forEach(lang => {
-            baseQuery.bool.must.push({
-                nested: {
-                    path: "sentences.translations",
-                    query: {
-                        term: {
-                            "sentences.translations.lang": lang
-                        }
+        baseQuery.bool.filter.push({
+            nested: {
+                path: "sentences.translations",
+                query: {
+                    terms: {
+                        "sentences.translations.lang.keyword": langs
                     }
                 }
-            });
+            }
         });
     }
 
@@ -68,7 +66,7 @@ const buildMeetingsPageQuery = (queryParams: GetPageQueryParams): any => {
         const speakerQuery: any = {
             bool: {
                 must: [
-                    {terms: {"sentences.translations.lang": queryParams.filters!.languages!.split(",")}},
+                    {terms: {"sentences.translations.lang.keyword": queryParams.filters!.languages!.split(",")}},
                     {
                         bool: {
                             should: queryParams.speaker!.map(speaker => {
@@ -109,7 +107,7 @@ const buildMeetingsPageQuery = (queryParams: GetPageQueryParams): any => {
         // 1. Save filters that are used in a content query
         const contentsQueryFilters: any = [];
         // Add language filters
-        contentsQueryFilters.push({terms: {"sentences.translations.lang": queryParams.filters!.languages!.split(",")}});
+        contentsQueryFilters.push({terms: {"sentences.translations.lang.keyword": queryParams.filters!.languages!.split(",")}});
         // Add speaker filters
         if (queryParams.speaker) {
             contentsQueryFilters.push({
