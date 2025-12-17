@@ -51,7 +51,7 @@ const phrasesSearchQueryBuilder = (meetingId: string, phrases: string[][], speak
                         path: "translations",
                         query: {
                             bool: {
-                                ...(lang ? {filter: [{term: {"translations.lang.keyword": lang}}]} : {}),
+                                ...(lang ? {filter: [{term: {"translations.lang": lang}}]} : {}),
                                 should: phrasesFilters,
                                 minimum_should_match: 1
                             }
