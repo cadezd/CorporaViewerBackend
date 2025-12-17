@@ -201,6 +201,24 @@ const getMeetingAsText = async (meetingId: string, pageLang: string, translation
 
         if (!groupedSentences[segmentId]) {
             groupedSentences[segmentId] = {sentences: [], speaker: currSentence.speaker};
+
+            if (currSentence.speaker === null) {
+                let placeholderLang = translationLang || currSentence.original_language;
+                switch (placeholderLang){
+                    case 'sl':
+                        groupedSentences[segmentId].speaker = "Zapisnik navaja";
+                        break;
+                    case 'sh-Cyrl':
+                        groupedSentences[segmentId].speaker = "Записник наводи";
+                        break;
+                    case 'sh-Latn':
+                        groupedSentences[segmentId].speaker = "Zapisnik navodi";
+                        break;
+                    case 'de':
+                        groupedSentences[segmentId].speaker = "Das Protokoll gibt an";
+                        break;
+                }
+            }
         }
         groupedSentences[segmentId].sentences.push(currSentence);
 
