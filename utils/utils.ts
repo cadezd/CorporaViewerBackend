@@ -338,7 +338,7 @@ const filterHighlights = (highlights: Highlight[]): Highlight[] => {
 
     const filteredHighlights: Highlight[] = highlights.filter((highlight: Highlight): boolean => {
         // Just a safety check
-        if (highlight.ids.length === 0 || highlight.rects.length === 0)
+        if (highlight.ids.length === 0)
             return false;
         // Always include sentences
         if (highlight.ids.length === 1 && sentencesIds.has(highlight.ids[0])) {
