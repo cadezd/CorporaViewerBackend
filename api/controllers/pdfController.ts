@@ -1,6 +1,5 @@
 import {Request, Response} from 'express';
 import async, {QueueObject} from 'async';
-import utils from "../../utils/utils";
 import {TaskData} from "../../models/TaskData";
 import sendFileStrategySelector from "../../strategies/sendFileStrategySelector";
 import pdfRepository from "../repositories/pdfRepository";
@@ -40,8 +39,7 @@ const queue: QueueObject<TaskData> = async.queue(async (taskData: TaskData, call
 
 const getById = async (req: Request, res: Response) => {
     try {
-        const filename: string = utils.reformatId(req.params.id);
-
+        const filename: string = req.params.id;
         const pdfFilePath: string = (process.env.PATH_TO_DATA || '/home/david/Data/CorporaViewer') + `/pdfs/${filename}.pdf`
 
         await queue.push(
@@ -57,7 +55,7 @@ const getById = async (req: Request, res: Response) => {
 
 const getThumbnailById = async (req: Request, res: Response) => {
     try {
-        const filename: string = utils.reformatId(req.params.id);
+        const filename: string = req.params.id;
         const thumbnailFilePath: string = (process.env.PATH_TO_DATA || '/home/david/Data/CorporaViewer') + `/thumbnails/${filename}.png`;
 
         await queue.push(

@@ -50,18 +50,6 @@ const tokenizeQuery = (query: string): string[][] => {
     });
 }
 
-const reformatId = (id: string): string => {
-    const reformattedId: string = id.split("_").map((item: string, index: number) => {
-        if (index > 1) {
-            return item.replace(/-/g, "p");
-        } else {
-            return item;
-        }
-    }).join("_");
-
-    return reformattedId;
-}
-
 const parseSpeaker = (speakerNames: string | undefined): string[] => {
     if (!speakerNames) return [];
 
@@ -362,7 +350,6 @@ const filterHighlights = (highlights: Highlight[]): Highlight[] => {
 
 
 export default {
-    reformatId,
     parseSpeaker,
     parsePlace,
     parseSort,
