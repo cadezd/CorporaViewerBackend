@@ -247,7 +247,7 @@ const getMeetingAsText = async (meetingId: string, pageLang: string, translation
                 .withAttribute('id', sentence.id)
                 .withChild(wordsHtmlElement)
                 .buildString();
-        });
+        }).join('');
 
         const segmentTextHtmlElement: string = new HtmlElementBuilder('div')
             .withAttribute('class', 'segment-text')
